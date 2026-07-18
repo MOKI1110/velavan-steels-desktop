@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velavan Steels Quotation</title>
+
+    <!-- PWA Setup -->
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="icon" href="./icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./icon.svg">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
+        :root {
+            --bg-color: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #ef4444;
+            /* Matches the red in the image brand */
+            --primary-hover: #dc2828;
+            --success: #10b981;
+            --font-family: 'Roboto', sans-serif;
+            --border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-family);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(239, 68, 68, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(15, 23, 42, 0.15), transparent 25%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            padding: 2px;
+        }
+
+        .invoice-border {
+            border: 2px solid var(--border-color);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        /* --- Header --- */
+        .company-header {
+            text-align: center;
+            border: 2px solid var(--border-color);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            font-family: 'Lora', serif;
+            /* Apply elegant serifs to branding */
+        }
+
+        .company-header h1 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .company-header input {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 5px;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .company-header .small-input {
+            width: auto;
+            min-width: 250px;
+        }
+
+        /* Forms & Inputs */
+        input {
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid transparent;
+            color: var(--text-main);
+            padding: 4px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            outline: none;
+            width: 100%;
+        }
+
+        input:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        /* Hidden input spin buttons */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none !important;
+            margin: 0 !important;
+            display: none !important;
+        }
+
+        /* --- Brand Row in Table --- */
+        .grid-table td.brand-label-cell {
+            width: 22%;
+            font-weight: bold;
+            color: var(--primary);
+            text-align: center;
+            font-size: 1.4rem;
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+        .brand-input-cell {
+            padding: 10px;
+        }
+
+        .brand-input-cell select {
+            color: var(--primary);
+            font-size: 1.4rem;
+            font-weight: bold;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.4);
+            border: 1px solid transparent;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-align: center;
+            /* Added strict centering */
+            outline: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .brand-input-cell select:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .brand-input-cell select:focus {
+            border-color: var(--primary);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .brand-input-cell select option {
+            background: var(--bg-color);
+            color: var(--text-main);
+        }
+
+        /* --- Data Grid --- */
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 2px solid var(--border-color);
+        }
+
+        .grid-table th,
+        .grid-table td {
+            border: 1px solid var(--border-color);
+            padding: 6px 8px;
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        .grid-table th {
+            text-align: center;
+            font-size: 0.85rem;
+            padding: 6px 2px;
+            background: rgba(0, 0, 0, 0.2);
+            white-space: nowrap;
+        }
+
+        .grid-table .col-dia {
+            width: 22%;
+            text-align: center !important;
+        }
+
+        .grid-table .col-nos {
+            width: 18%;
+        }
+
+        .grid-table .col-wt {
+            width: 20%;
+        }
+
+        .grid-table .col-rate {
+            width: 18%;
+        }
+
+        .grid-table .col-val {
+            width: 26%;
+        }
+
+        .val-display {
+            padding-right: 10px;
+        }
+
+        .val-total {
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .text-red {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .print-only {
+            display: none;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        /* Summary Section attached to grid */
+        .summary-label {
+            text-align: center !important;
+            font-weight: bold;
+        }
+
+        .approx-text {
+            text-align: center !important;
+            font-weight: bold;
+        }
+
+        .no-freight-text {
+            color: var(--primary);
+            text-align: center !important;
+            font-weight: bold;
+        }
+
+        .gst-text {
+            text-align: center !important;
+            font-weight: bold;
+        }
+
+        /* Bank Details */
+        .bank-details {
+            margin-top: 20px;
+            border: 2px solid var(--border-color);
+            text-align: center;
+        }
+
+        .bank-title {
+            color: var(--primary);
+            font-weight: bold;
+            padding: 10px;
+            border-bottom: 2px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .bank-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .bank-col {
+            padding: 10px;
+        }
+
+        .bank-col:first-child {
+            border-right: none;
+        }
+
+        .bank-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .bank-row span {
+            width: 100px;
+            text-align: left;
+        }
+
+        .footer-date {
+            margin-top: 20px;
+            text-align: center;
+            border: 2px solid var(--border-color);
+            padding: 10px;
+            font-weight: bold;
+            color: #3b82f6;
+            /* A contrasting blue like the image */
+        }
+
+        .btn-print {
+            margin: 20px auto;
+            display: block;
+            padding: 12px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            transition: all 0.3s;
+        }
+
+        .btn-print:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+        }
+
+        .btn-refresh {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #2b2e3b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-refresh:hover {
+            background: #373b4d;
+            transform: translateY(-2px);
+        }
+
+        .refresh-icon-gif {
+            display: none;
+        }
+
+        .btn-refresh:hover .refresh-icon-static {
+            display: none;
+        }
+
+        .btn-refresh:hover .refresh-icon-gif {
+            display: block;
+        }
+
+        /* Align value column cells to match the loading/unloading/freight padding */
+        .grid-table td.row-val,
+        #sub-value,
+        #discount-value,
+        #total-value,
+        #gross-weight {
+            padding-right: 16px !important;
+        }
+
+        /* --- PRINT STYLING --- */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 0;
+            }
+
+            body,
+            html {
+                height: 100%;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+                background: white;
+                color: black;
+                font-size: 13px !important;
+            }
+
+            .container,
+            .glass-panel {
+                background: none;
+                backdrop-filter: none;
+                border: none;
+                box-shadow: none;
+                padding: 5mm !important;
+                /* Bleed padding belongs here */
+                margin: 0 !important;
+                max-width: 100%;
+                height: 100%;
+                box-sizing: border-box;
+            }
+
+            .invoice-border {
+                border: 1.5pt solid #000;
+                padding: 10px;
+                border-radius: 0;
+            }
+
+            .company-header {
+                padding: 10px !important;
+                margin-bottom: 10px !important;
+                border: 1.5pt solid #000;
+                border-radius: 0;
+            }
+
+            .grid-table {
+                margin-bottom: 10px;
+                width: 100%;
+                border-collapse: collapse;
+                border: 1.5pt solid #000;
+                border-radius: 0;
+            }
+
+            .bank-details {
+                margin: 0 0 10px 0 !important;
+                border: 1.5pt solid #000;
+                border-radius: 0;
+                border-collapse: collapse;
+            }
+
+            .footer-date {
+                border: 1.5pt solid #000;
+                padding: 6px !important;
+                margin: 0 !important;
+                text-align: center;
+                border-radius: 0;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            tr.is-empty {
+                display: none !important;
+            }
+
+            /* Compact all table cells in print so summary doesn't have huge gaps */
+            .grid-table td,
+            .grid-table th {
+                padding: 2px 5px !important;
+                line-height: 1.1 !important;
+            }
+
+            /* Summary label cells tighter */
+            .summary-label,
+            .approx-text,
+            .no-freight-text,
+            .gst-text {
+                padding: 2px 5px !important;
+                line-height: 1.1 !important;
+            }
+
+            /* Value cells tighter */
+            .val-total,
+            .val-display {
+                padding: 2px 5px !important;
+                line-height: 1.1 !important;
+            }
+
+            .grid-table td.row-val,
+            #sub-value,
+            #discount-value,
+            #total-value,
+            #gross-weight {
+                padding-right: 13px !important;
+            }
+
+            .bank-title {
+                padding: 8px !important;
+                background: transparent !important;
+                color: #000 !important;
+                border-bottom: 1.5pt solid #000 !important;
+            }
+
+            .print-only {
+                display: block !important;
+            }
+
+            #freight-display {
+                display: block !important;
+            }
+
+            .bank-col {
+                padding: 10px !important;
+            }
+
+            .bank-col:first-child {
+                border-right: none !important;
+            }
+
+            .bank-row {
+                margin-bottom: 4px;
+            }
+
+            .btn-print {
+                display: none !important;
+            }
+
+            .text-red {
+                color: red !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            :root {
+                --text-main: #000;
+                --primary: red;
+            }
+
+            .grid-table th,
+            .grid-table td,
+            .brand-label-cell,
+            .brand-input-cell {
+                border: 1px solid #000 !important;
+                background-clip: padding-box;
+                padding: 10px !important;
+            }
+
+            .grid-table th {
+                background: transparent;
+            }
+
+            input,
+            select {
+                background: transparent;
+                border: none;
+                color: black;
+                padding: 0;
+                font-size: inherit;
+            }
+
+            select {
+                appearance: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+            }
+
+            ::-webkit-inner-spin-button,
+            ::-webkit-outer-spin-button {
+                -webkit-appearance: none !important;
+                margin: 0 !important;
+                display: none !important;
+            }
+
+            .val-total,
+            .val-display {
+                color: black;
+            }
+
+            * {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button class="btn-refresh no-print" onclick="location.reload()" title="Refresh Page">
+        <img class="refresh-icon-static" src="./icons8-refresh.svg" alt="Refresh" width="18" height="18" style="border-radius: 4px;">
+        <img class="refresh-icon-gif" src="./icons8-refresh.gif" alt="Refresh" width="18" height="18" style="border-radius: 4px;">
+        Refresh
+    </button>
+
+    <div id="print-area" class="glass-panel">
+        <div class="invoice-border">
+
+            <!-- Company Header -->
+            <div class="company-header" style="position: relative; padding: 24px; text-align: center;">
+                <div
+                    style="color: var(--primary); font-size: 1.9rem; font-weight: 800; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;">
+                    VELAVAN STEELS
+                </div>
+                <div style="font-weight: 600; font-size: 1.05rem; margin-bottom: 12px; letter-spacing: 0.5px;">
+                    93/2, Sathy Main Road, Saravanampatti, Coimbatore - 641 035
+                </div>
+                <div style="font-weight: bold; font-size: 1rem; margin-bottom: 12px;">
+                    GSTIN : <span class="text-red">33ADUFS6139F1ZP</span>
+                </div>
+                <div style="font-weight: bold; font-size: 1rem; margin-bottom: 12px;">
+                    E-Mail : <span class="text-red">srivelavansteels2018@gmail.com</span>
+                </div>
+                <div style="font-weight: bold; font-size: 1rem;">
+                    Contact : <span class="text-red">9941088834</span> /
+                    <span class="text-red">9047088834</span>
+                </div>
+            </div>
+
+            <!-- Data Grid -->
+            <table class="grid-table">
+                <thead>
+                    <tr>
+                        <td class="brand-label-cell">BRAND</td>
+                        <td colspan="4" class="brand-input-cell" style="position: relative; text-align: center;">
+                            <span id="brand-print-display" class="print-only text-red" style="font-weight: bold; text-align: center; width: 100%; font-size: 1.4rem;"></span>
+                            <select id="brand-select" onchange="toggleBrand()" class="no-print">
+                                <option disabled selected value="">-- Select Brand --</option>
+                                <option>JSW NEO STEEL 550D</option>
+                                <option>AMMAN-TRY FE550XD</option>
+                                <option>INDROLA FE550D</option>
+                                <option>SHYAM STEEL FE550D</option>
+                                <option>TATA TISCON FE550D</option>
+                                <option>PRIME GOLD FE550D</option>
+                                <option>VIZAG FE550D/500D</option>
+                                <option>Other Brands</option>
+                                
+                            </select>
+                            <input type="text" id="other-brand-input" class="no-print" oninput="this.value=this.value.toUpperCase();updateBrandPrintDisplay()" placeholder="Type Brand Name..." style="display: none; width: 100%; margin-top: 6px; font-size: 1rem; font-weight: bold; padding: 6px 10px; border-radius: 4px; background: transparent; border: 1px solid var(--primary); color: var(--primary); text-align: center; box-sizing: border-box;">
+                            <select id="unit-toggle" onchange="toggleUnit()" class="no-print" style="display: none; margin-left: 10px; width: 70px; font-size: 0.8rem; padding: 4px 6px; border-radius: 4px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.15); color: var(--text-main); cursor: pointer;">
+                                <option value="kg">Kgs</option>
+                                <option value="pcs">Pcs</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-dia">Section</th>
+                        <th class="col-nos">Quantity<br>(No's)</th>
+                        <th class="col-wt">Weight<br>(Kg)</th>
+                        <th class="col-rate" id="rate-header">Rate / Kg</th>
+                        <th class="col-val">Value</th>
+                    </tr>
+                </thead>
+                <tbody id="grid-body">
+                    <!-- Rows injected via JS block to keep it clean -->
+                </tbody>
+
+                <!-- Summary Footers -->
+                <tbody>
+                    <tr>
+                        <td colspan="2" class="text-center text-red" style="font-weight: bold; font-size: 1rem;">
+                            Approx Gross Weight (Kg)
+
+                        </td>
+                        <td class="text-red val-display" id="gross-weight">0</td>
+                        <td class="summary-label">SUB VALUE</td>
+                        <td class="val-total" id="sub-value">0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" rowspan="2" class="approx-text text-red">
+                            HANDLING CHARGES
+                        </td>
+                        <td class="summary-label">
+                            LOADING
+                            <div class="no-print" style="font-size: 0.7rem; font-weight: normal; margin-top: 4px;">
+                                <select id="loading-toggle" onchange="toggleLoadUnload()" style="width: 50px; font-size: 0.65rem; padding: 1px 3px; border-radius: 3px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td id="loading-cell"><span id="loading" class="val-total" style="display:block; text-align:right; font-weight:600; padding-right:8px;">0</span></td>
+                    </tr>
+                    <tr>
+                        <td class="summary-label">
+                            UNLOADING
+                            <div class="no-print" style="font-size: 0.7rem; font-weight: normal; margin-top: 4px;">
+                                <select id="unloading-toggle" onchange="toggleLoadUnload()" style="width: 50px; font-size: 0.65rem; padding: 1px 3px; border-radius: 3px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
+                                    <option value="yes">Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td id="unloading-cell"><span id="unloading" class="val-total" style="display:block; text-align:right; font-weight:600; padding-right:8px;">0</span></td>
+                    </tr>
+                    <tr id="freight-row">
+                        <td colspan="3" class="no-freight-text" id="freight-label">
+                            <span id="freight-text">FREIGHT CHARGES APPLICABLE</span>
+                            <div style="font-size: 0.75rem; margin-top: 8px; color: var(--text-main); font-weight: normal;"
+                                class="no-print">
+                                <label style="margin-right: 5px;">Include Freight?</label>
+                                <select id="freight-toggle" onchange="toggleFreight()"
+                                    style="width: 55px; font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
+                                    <option value="yes" selected>Yes</option>
+                                    <option value="no">No</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td class="summary-label" id="freight-summary-col">FREIGHT</td>
+                        <td id="freight-value-cell">
+                            <span id="freight-display" class="val-total" style="display:none; text-align:right; font-weight:600; padding-right:8px;">0</span>
+
+                            <input type="text" id="freight" value="0"
+                                class="no-print"
+                                style="display:block; text-align:right; padding-right:8px; width:100px; margin-left:auto;"
+                                oninput="handleFreightInput(this)"
+                                onfocus="this.value = this.value.replace(/,/g,'')"
+                                onblur="formatFreightFinal(this)"
+                            >
+                        </td>
+                    </tr>
+                    <tr id="discount-row" style="display: none;">
+                        <td colspan="3" class="no-freight-text">
+                            <span id="discount-text">DISCOUNT APPLIED</span>
+                            <span id="discount-percent-display" style="font-size: 0.85rem; margin-left: 5px; color: #000 !important;"></span>
+                            <div style="font-size: 0.75rem; margin-top: 8px; color: var(--text-main); font-weight: normal;"
+                                class="no-print">
+                                <label style="margin-right: 5px;">Discount %</label>
+                                <input type="number" id="discount-percent" value="0" step="0.01" min="0" max="100"
+                                    oninput="calculateAll()" onfocus="if(this.value==='0')this.value=''" onblur="if(this.value!=='') this.value=parseFloat(this.value).toFixed(2); else this.value='0';"
+                                    style="width: 65px; font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; background: #fff; color: #000; border: 1px solid #ccc; text-align: center;">
+                            </div>
+                        </td>
+                        <td class="summary-label">DISCOUNT</td>
+                        <td class="val-total" id="discount-value" style="color: green; font-weight: bold;">0</td>
+                    </tr>
+                    <tr>
+                        <td colspan="3" class="gst-text">RATES ARE INCLUSIVE OF 18% GST</td>
+                        <td class="summary-label text-red">TOTAL VALUE</td>
+                        <td class="text-red val-total" id="total-value" style="font-size: 1.1rem;">0</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Bank Details -->
+            <div class="bank-details">
+                <div class="bank-title">BANK DETAILS</div>
+                <div class="bank-grid">
+                    <div class="bank-col" style="text-align: center; padding: 10px;">
+                        <div style="text-align: center; font-weight: bold; margin-bottom: 10px; font-size: 1.05rem; width: 100%;">CITY UNION BANK</div>
+                        <div style="display: inline-block; text-align: left;">
+                            <div class="bank-row"><span>A/C NO :</span>
+                                <div class="bank-val">510909010106772</div>
+                            </div>
+                            <div class="bank-row"><span>IFSC :</span>
+                                <div class="bank-val">CIUB0000325</div>
+                            </div>
+                            <div class="bank-row"><span>BRANCH :</span>
+                                <div class="bank-val">SARAVANAMPATTI</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bank-col"></div>
+                </div>
+            </div>
+            <div style="border-top: 2px solid var(--border-color); margin-top: 0;"></div>
+
+            <div class="footer-date" id="date-footer">
+                Rate Valid For One Day Only - <span id="current-date"></span>
+            </div>
+
+        </div>
+    </div>
+
+    <button class="btn-print" onclick="printQuotation()">Print Quotation</button>
+
+    <!-- Used for generating PDF inside mobile WebView (avoids hanging print dialog) -->
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+
+    <script>
+        // Formatting Date
+        const dateOpts = { day: '2-digit', month: 'short', year: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-GB', dateOpts).toUpperCase();
+
+        // Data definition for fixed rows
+        const items = [
+            { id: '8', name: '8 MM', typ: 'steel', wtPerRod: 4.75, rate: 75.00, defNos: 0 },
+            { id: '10', name: '10 MM', typ: 'steel', wtPerRod: 7.5, rate: 73.00, defNos: 0 },
+            { id: '12', name: '12 MM', typ: 'steel', wtPerRod: 10.3, rate: 72.80, defNos: 0 },
+            { id: '16', name: '16 MM', typ: 'steel', wtPerRod: 18.5, rate: 72.80, defNos: 0 },
+            { id: '20', name: '20 MM', typ: 'steel', wtPerRod: 29.5, rate: 72.80, defNos: 0 },
+            { id: '25', name: '25 MM', typ: 'steel', wtPerRod: 48.5, rate: 72.80, defNos: 0 },
+            { id: '32', name: '32 MM', typ: 'steel', wtPerRod: 75.7, rate: 72.80, defNos: 0 },
+            { id: 'bw', name: 'BINDING WIRE', typ: 'manual', rate: 95.00, defNos: 0, defWt: 0 },
+            { id: 'cb', name: 'COVER BLOCK', typ: 'manual', rate: 110.00, defNos: 0, defWt: 0 },
+            { id: 'rg', name: 'RINGS', typ: 'manual', rate: 73.00, defNos: 0, defWt: 0 },
+            { id: 'cm', name: 'COIR MAT', typ: 'manual', rate: 900.00, defNos: 0, defWt: 0 },
+        ];
+
+        const tbody = document.getElementById('grid-body');
+
+        items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.dataset.id = item.id;
+            tr.dataset.typ = item.typ;
+
+            let wtInputHTML = `<span class="val-display row-wt">0</span>`;
+            if (item.typ === 'steel') {
+                tr.dataset.wt = item.wtPerRod;
+            }
+
+            tr.innerHTML = `
+            <td class="col-dia">${item.name}</td>
+            <td><input type="number" class="row-nos text-right" style="text-align: right; padding-right: 10px;" value="${item.defNos}" oninput="this.value=this.value.replace(/^0+(?=[1-9])/,'');calculateAll()" onfocus="if(this.value==='0')this.value=''" onblur="this.value=this.value===''?0:parseFloat(this.value)||0;calculateAll()"></td>
+            <td>${wtInputHTML}</td>
+            <td><input type="number" class="row-rate" style="color: var(--primary); text-align: right;" value="${item.rate.toFixed(2)}" oninput="calculateAll()" onblur="if(this.value!=='')this.value=parseFloat(this.value).toFixed(2)"></td>
+            <td class="row-val">0</td>
+        `;
+            tbody.appendChild(tr);
+        });
+
+        function formatINR(num) {
+            return Math.round(num).toLocaleString('en-IN');
+        }
+
+        function calculateAll() {
+            let grossWeight = 0;
+            let subValue = 0;
+            let steelValue = 0; // Only steel items for discount
+
+            const rows = document.getElementById('grid-body').querySelectorAll('tr');
+            rows.forEach(tr => {
+                const nos = parseFloat(tr.querySelector('.row-nos').value) || 0;
+                const rate = parseFloat(tr.querySelector('.row-rate').value) || 0;
+                const typ = tr.dataset.typ;
+
+                // Add empty class during calculation for print hiding
+                tr.classList.toggle('is-empty', nos <= 0);
+
+                let weight = 0;
+
+                if (typ === 'steel') {
+                    const wtPerRod = parseFloat(tr.dataset.wt);
+                    weight = nos * wtPerRod;
+                } else {
+                    weight = nos; // 1 NO means 1 KG
+                }
+
+                tr.querySelector('.row-wt').innerText = parseFloat(weight.toFixed(3));
+
+                const unitMode = document.getElementById('unit-toggle').value;
+                let value = 0;
+                if (unitMode === 'pcs' && typ === 'steel') {
+                    value = nos * rate; // Pcs mode: value = quantity × rate/pcs
+                } else {
+                    value = weight * rate; // Kgs mode: value = weight × rate/kg
+                }
+                tr.querySelector('.row-val').innerText = formatINR(value);
+
+                grossWeight += weight;
+                subValue += value;
+                if (typ === 'steel') steelValue += value;
+            });
+
+            // Auto calculate Loading & Unloading based on Gross MT * rates
+            const grossWeightMt = grossWeight / 1000;
+            const calculatedLoading = Math.round(grossWeightMt * 330);
+            const calculatedUnloading = Math.round(grossWeightMt * 355);
+
+            const loadToggle = document.getElementById('loading-toggle').value;
+            const unloadToggle = document.getElementById('unloading-toggle').value;
+
+            let loading = 0;
+            if (loadToggle === 'yes') {
+                const loadInput = document.getElementById('loading');
+                if (loadInput) { loadInput.value = calculatedLoading; loading = calculatedLoading; }
+            }
+
+            let unloading = 0;
+            if (unloadToggle === 'yes') {
+                const unloadInput = document.getElementById('unloading');
+                if (unloadInput) { unloadInput.value = calculatedUnloading; unloading = calculatedUnloading; }
+            }
+
+            const freight = parseINR(document.getElementById('freight').value);
+
+            // Discount calculation (only on steel items)
+            const discountPercent = parseFloat(document.getElementById('discount-percent').value) || 0;
+            const discountAmount = Math.round(steelValue * discountPercent / 100);
+            document.getElementById('discount-value').innerText = discountAmount > 0 ? '- ' + formatINR(discountAmount) : '0';
+            
+            // Print display for percent
+            document.getElementById('discount-percent-display').innerText = discountAmount > 0 ? `(${discountPercent}%)` : '';
+
+            let totalValue = subValue + loading + unloading + freight - discountAmount;
+
+            // Round to nearest 10
+            totalValue = Math.round(totalValue / 10) * 10;
+
+            document.getElementById('gross-weight').innerText = Math.round(grossWeight);
+            document.getElementById('sub-value').innerText = formatINR(subValue);
+            document.getElementById('total-value').innerText = formatINR(totalValue);
+
+            // Update loading/unloading display spans
+            const loadSpan = document.getElementById('loading');
+            const unloadSpan = document.getElementById('unloading');
+            if (loadSpan && loadSpan.tagName === 'SPAN') loadSpan.innerText = formatINR(loading);
+            if (unloadSpan && unloadSpan.tagName === 'SPAN') unloadSpan.innerText = formatINR(unloading);
+
+            // Update freight display
+            const freightDisplay = document.getElementById('freight-display');
+            const freightToggle = document.getElementById('freight-toggle');
+            if (freightDisplay) {
+                if (freightToggle && freightToggle.value === 'no') {
+                    freightDisplay.innerHTML = '<span class="text-red" style="font-weight:bold;">FREE</span>';
+                } else {
+                    freightDisplay.innerText = formatINR(freight);
+                }
+            }
+        }
+
+        function toggleFreight() {
+            const toggle = document.getElementById('freight-toggle').value;
+            const textSpan = document.getElementById('freight-text');
+            const input = document.getElementById('freight');
+            const display = document.getElementById('freight-display');
+
+            if (toggle === 'yes') {
+                textSpan.innerText = 'FREIGHT CHARGES APPLICABLE';
+                input.style.display = 'block';      // show input
+                display.style.display = 'none';     // hide span on screen
+                
+                // Style it to look like a standard input box
+                input.style.background = 'rgba(15, 23, 42, 0.4)';
+                input.style.border = '1px solid var(--border-color)';
+                input.style.color = 'var(--text-main)';
+                input.style.borderRadius = '4px';
+                input.style.width = '100px';
+                input.style.marginLeft = 'auto'; // center horizontally/right
+                input.style.textAlign = 'right';
+                input.style.padding = '4px 10px';
+                input.style.fontWeight = '600';
+            } else {
+                textSpan.innerText = 'NO FREIGHT CHARGES';
+                input.style.display = 'none';       // hide input
+                input.value = 0;
+                display.style.display = 'block';    // show span again (for FREE text)
+            }
+            calculateAll();
+        }
+
+        function updateBrandPrintDisplay() {
+            const brand = document.getElementById('brand-select').value;
+            const otherBrandInput = document.getElementById('other-brand-input');
+            const printDisplay = document.getElementById('brand-print-display');
+
+            if (brand === 'Other Brands') {
+                printDisplay.innerText = otherBrandInput.value.toUpperCase();
+            } else {
+                printDisplay.innerText = brand.toUpperCase();
+            }
+        }
+
+        function toggleBrand() {
+            const brand = document.getElementById('brand-select').value;
+            const otherBrandInput = document.getElementById('other-brand-input');
+            const unitToggle = document.getElementById('unit-toggle');
+
+            const brandSelect = document.getElementById('brand-select');
+
+            if (brand === 'Other Brands') {
+                otherBrandInput.style.display = 'block';
+                otherBrandInput.focus();
+            } else {
+                brandSelect.style.display = '';
+                otherBrandInput.style.display = 'none';
+                otherBrandInput.value = '';
+            }
+
+            if (brand === 'TATA TISCON FE550D') {
+                unitToggle.style.display = 'inline-block';
+            } else {
+                unitToggle.style.display = 'none';
+                unitToggle.value = 'kg';
+                document.getElementById('rate-header').innerText = 'RATE / KG';
+                // Hide discount when switching away
+                document.getElementById('discount-row').style.display = 'none';
+                document.getElementById('discount-percent').value = '0';
+            }
+            updateBrandPrintDisplay();
+            document.getElementById('freight-toggle').value = 'yes';
+            toggleFreight();
+            calculateAll();
+        }
+
+        function toggleUnit() {
+            const unit = document.getElementById('unit-toggle').value;
+            const rateHeader = document.getElementById('rate-header');
+            const discountRow = document.getElementById('discount-row');
+            if (unit === 'pcs') {
+                rateHeader.innerText = 'RATE / PCS';
+                discountRow.style.display = 'table-row';
+            } else {
+                rateHeader.innerText = 'RATE / KG';
+                discountRow.style.display = 'none';
+                document.getElementById('discount-percent').value = '0';
+            }
+            calculateAll();
+        }
+
+        function toggleLoadUnload() {
+            const loadToggle = document.getElementById('loading-toggle').value;
+            const unloadToggle = document.getElementById('unloading-toggle').value;
+            const loadCell = document.getElementById('loading-cell');
+            const unloadCell = document.getElementById('unloading-cell');
+
+            if (loadToggle === 'no') {
+                loadCell.innerHTML = '<span class="text-red" style="display:block; text-align:right; font-weight:bold; padding-right:8px;">FREE</span>';
+            } else {
+                loadCell.innerHTML = '<span id="loading" class="val-total" style="display:block; text-align:right; font-weight:600; padding-right:8px;">0</span>';
+            }
+
+            if (unloadToggle === 'no') {
+                unloadCell.innerHTML = '<span class="text-red" style="display:block; text-align:right; font-weight:bold; padding-right:8px;">FREE</span>';
+            } else {
+                unloadCell.innerHTML = '<span id="unloading" class="val-total" style="display:block; text-align:right; font-weight:600; padding-right:8px;">0</span>';
+            }
+
+            calculateAll();
+        }
+
+        function formatINRLive(value) {
+            if (!value) return '';
+            value = value.replace(/,/g, '');
+            return Number(value).toLocaleString('en-IN');
+        }
+
+        function parseINR(value) {
+            return parseFloat(value.replace(/,/g, '')) || 0;
+        }
+
+        function handleFreightInput(el) {
+            let clean = el.value.replace(/[^0-9]/g, '');
+            el.value = formatINRLive(clean);
+            calculateAll();
+        }
+
+        function formatFreightFinal(el) {
+            if (el.value === '') el.value = '0';
+            el.value = formatINRLive(el.value);
+            calculateAll();
+        }
+
+        function setPrintButtonState(isBusy) {
+            const btn = document.querySelector('.btn-print');
+            if (!btn) return;
+            if (isBusy) {
+                btn.disabled = true;
+                btn.style.opacity = '0.7';
+                btn.style.cursor = 'progress';
+                if (!btn.getAttribute('data-original-text')) {
+                    btn.setAttribute('data-original-text', btn.innerText);
+                }
+                btn.innerText = 'Generating PDF...';
+            } else {
+                btn.disabled = false;
+                btn.style.opacity = '';
+                btn.style.cursor = '';
+                const orig = btn.getAttribute('data-original-text');
+                btn.innerText = orig || 'Print Quotation';
+                btn.removeAttribute('data-original-text');
+            }
+        }
+
+        function printQuotation() {
+            // On mobile WebView, `window.print()` often hangs instead of letting users choose "Save as PDF".
+            const ua = navigator.userAgent || '';
+            if (/Android|iPhone|iPad|iPod|wv/i.test(ua)) {
+                generateQuotationPdf();
+            } else {
+                window.print();
+            }
+        }
+
+        async function generateQuotationPdf() {
+            setPrintButtonState(true);
+        
+            try {
+                const area = document.getElementById('print-area') || document.querySelector('.glass-panel');
+                if (!area) throw new Error('Invoice container not found');
+        
+                await new Promise(resolve => setTimeout(resolve, 200));
+        
+                // Hide no-print elements
+                const hidden = [];
+                document.querySelectorAll('.no-print').forEach(el => {
+                    hidden.push({ el, prev: el.style.display });
+                    el.style.display = 'none';
+                });
+        
+                const btn = document.querySelector('.btn-print');
+                const prevBtnDisplay = btn ? btn.style.display : '';
+                if (btn) btn.style.display = 'none';
+        
+                if (!window.html2canvas) throw new Error('html2canvas failed to load');
+                const jsPDFCtor = window.jspdf?.jsPDF;
+                if (!jsPDFCtor) throw new Error('jsPDF failed to load');
+        
+                const canvas = await window.html2canvas(area, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    scrollY: -window.scrollY
+                });
+        
+                // Restore UI
+                if (btn) btn.style.display = prevBtnDisplay;
+                hidden.forEach(({ el, prev }) => { el.style.display = prev; });
+        
+                const pdf = new jsPDFCtor({ orientation: 'p', unit: 'mm', format: 'a4' });
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+                const imgWidth = pdfWidth;
+                const pageHeightPx = Math.floor((pdfHeight * canvas.width) / imgWidth);
+                const totalPages = Math.max(1, Math.ceil(canvas.height / pageHeightPx));
+        
+                for (let page = 0; page < totalPages; page++) {
+                    if (page > 0) pdf.addPage();
+        
+                    const startY = page * pageHeightPx;
+                    const pageHeight = Math.min(pageHeightPx, canvas.height - startY);
+        
+                    const pageCanvas = document.createElement('canvas');
+                    pageCanvas.width = canvas.width;
+                    pageCanvas.height = pageHeight;
+        
+                    const ctx = pageCanvas.getContext('2d');
+                    ctx.drawImage(canvas, 0, startY, canvas.width, pageHeight, 0, 0, canvas.width, pageHeight);
+        
+                    const imgData = pageCanvas.toDataURL('image/png');
+                    const imgHeight = pageCanvas.height * imgWidth / canvas.width;
+        
+                    pdf.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                }
+        
+                const fileName = `Quotation-${new Date().toISOString().slice(0, 10)}.pdf`;
+        
+                // ✅ THIS is the fix — anchor download works reliably in Android WebView APK
+                const blob = pdf.output('blob');
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = fileName;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+        
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 2000);
+        
+            } catch (err) {
+                console.error('PDF generation failed:', err);
+                alert('Could not generate PDF: ' + err.message);
+            } finally {
+                setPrintButtonState(false);
+            }
+        }
+
+        updateBrandPrintDisplay();
+        calculateAll(); // Run once
+    </script>
+
+</body>
+
+</html>

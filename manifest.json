@@ -1,0 +1,17 @@
+{
+  "name": "Velavan Steels Quotation",
+  "short_name": "VelavanSteels",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "description": "Instantly calculate steel bar quotations with current market rates.",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
