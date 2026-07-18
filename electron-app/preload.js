@@ -12,4 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   openEmail:    (filePath, recipient) => ipcRenderer.invoke('open-email', filePath, recipient),
 
+  checkUpdates: () => ipcRenderer.invoke('check-updates'),
+
 });

@@ -23,23 +23,7 @@ function createWindow() {
   const startUrl = path.join(__dirname, 'web', 'index.html');
   win.loadFile(startUrl);
 
-  // Custom Menu: Only show 'Check for Updates'
-  const template = [
-    {
-      label: 'Update',
-      submenu: [
-        {
-          label: 'Check for Updates',
-          click: () => {
-            isManualUpdateCheck = true;
-            autoUpdater.checkForUpdatesAndNotify();
-          }
-        }
-      ]
-    }
-  ];
-  const menu = Menu.buildFromTemplate(template);
-  Menu.setApplicationMenu(menu);
+  Menu.setApplicationMenu(null);
 }
 
 app.whenReady().then(() => {
@@ -115,6 +99,12 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
 
+
+// ✅ CHECK FOR UPDATES HANDLER
+ipcMain.handle('check-updates', () => {
+  isManualUpdateCheck = true;
+  autoUpdater.checkForUpdatesAndNotify();
+});
 
 // ✅ SAVE PDF HANDLER
 ipcMain.handle('save-pdf', async (event, buffer) => {

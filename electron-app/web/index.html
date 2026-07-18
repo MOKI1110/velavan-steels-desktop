@@ -15,6 +15,15 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
+        /* Hide scrollbar globally */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        * {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
         :root {
             --bg-color: #0f172a;
             --glass-bg: rgba(255, 255, 255, 0.05);
@@ -41,6 +50,7 @@
             background-image:
                 radial-gradient(circle at 15% 50%, rgba(239, 68, 68, 0.15), transparent 25%),
                 radial-gradient(circle at 85% 30%, rgba(15, 23, 42, 0.15), transparent 25%);
+            background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             padding: 40px 20px;
@@ -566,6 +576,29 @@
             display: block;
         }
 
+        .btn-update {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #2b2e3b;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 100;
+            font-size: 1rem;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-update:hover {
+            background: #373b4d;
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
         /* Align value column cells to match the loading/unloading/freight padding */
         .grid-table td.row-val,
         #sub-value,
@@ -778,6 +811,10 @@
         <img class="refresh-icon-static" src="./icons8-refresh.svg" alt="Refresh" width="18" height="18" style="border-radius: 4px;">
         <img class="refresh-icon-gif" src="./icons8-refresh.gif" alt="Refresh" width="18" height="18" style="border-radius: 4px;">
         Refresh
+    </button>
+
+    <button class="btn-update no-print" onclick="window.electronAPI.checkUpdates()" title="Check for Updates">
+        Check for Updates
     </button>
 
     <div id="print-area" class="glass-panel">
