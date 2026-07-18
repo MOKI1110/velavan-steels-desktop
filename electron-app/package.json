@@ -1,6 +1,6 @@
 {
   "name": "velavan-steels-quotation",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "description": "Quotation application for Velavan Steels",
   "main": "main.js",
   "scripts": {
@@ -34,8 +34,7 @@
       "signAndEditExecutable": false
     },
     "nsis": {
-      "oneClick": false,
-      "allowToChangeInstallationDirectory": true
+      "oneClick": true
     }
   },
   "devDependencies": {

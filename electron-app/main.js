@@ -80,6 +80,10 @@ autoUpdater.on('error', (err) => {
 
 autoUpdater.on('download-progress', (progressObj) => {
   console.log(`Download speed: ${progressObj.bytesPerSecond} - Downloaded ${progressObj.percent}%`);
+  const win = BrowserWindow.getAllWindows()[0];
+  if (win) {
+    win.webContents.send('update-progress', progressObj);
+  }
 });
 
 autoUpdater.on('update-downloaded', () => {

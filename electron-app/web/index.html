@@ -817,6 +817,32 @@
         Check for Updates
     </button>
 
+    <!-- Update Progress UI -->
+    <div id="update-progress-container" class="no-print" style="display:none; position:fixed; top:70px; right:20px; background:#2b2e3b; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.15); z-index:100; width: 250px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);">
+        <div style="font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; color: #fff;">Downloading Update... <span id="update-percent">0</span>%</div>
+        <div style="width: 100%; background: rgba(0,0,0,0.4); border-radius: 4px; height: 10px; overflow: hidden;">
+            <div id="update-progress-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease;"></div>
+        </div>
+    </div>
+
+    <script>
+        if (window.electronAPI && window.electronAPI.onUpdateProgress) {
+            window.electronAPI.onUpdateProgress((progressObj) => {
+                const container = document.getElementById('update-progress-container');
+                const bar = document.getElementById('update-progress-bar');
+                const percentText = document.getElementById('update-percent');
+                
+                if (container.style.display === 'none') {
+                    container.style.display = 'block';
+                }
+                
+                const percent = Math.round(progressObj.percent);
+                bar.style.width = percent + '%';
+                percentText.innerText = percent;
+            });
+        }
+    </script>
+
     <div id="print-area" class="glass-panel">
         <div class="invoice-border">
 
