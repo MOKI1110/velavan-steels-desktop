@@ -1,9 +1,11 @@
-const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, Menu } = require('electron');
 const { autoUpdater } = require('electron-updater');
+autoUpdater.forceDevUpdateConfig = true;
 const path = require('path');
 const fs = require('fs');
 const { exec } = require('child_process');
 
+let isManualUpdateCheck = false;
 app.setName('Velavan-Steels-Quotation');
 
 function createWindow() {
@@ -20,6 +22,24 @@ function createWindow() {
 
   const startUrl = path.join(__dirname, 'web', 'index.html');
   win.loadFile(startUrl);
+
+  // Custom Menu: Only show 'Check for Updates'
+  const template = [
+    {
+      label: 'Update',
+      submenu: [
+        {
+          label: 'Check for Updates',
+          click: () => {
+            isManualUpdateCheck = true;
+            autoUpdater.checkForUpdatesAndNotify();
+          }
+        }
+      ]
+    }
+  ];
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
 }
 
 app.whenReady().then(() => {
@@ -40,14 +60,38 @@ autoUpdater.on('checking-for-update', () => {
 
 autoUpdater.on('update-available', (info) => {
   console.log('Update available:', info.version);
+  if (isManualUpdateCheck) {
+    dialog.showMessageBox({
+      type: 'info',
+      title: 'Update Available',
+      message: `Version ${info.version} is available. It is being downloaded in the background.`
+    });
+    isManualUpdateCheck = false;
+  }
 });
 
 autoUpdater.on('update-not-available', () => {
   console.log('No update available.');
+  if (isManualUpdateCheck) {
+    dialog.showMessageBox({
+      type: 'info',
+      title: 'Up to Date',
+      message: 'Your application is already up to date.'
+    });
+    isManualUpdateCheck = false;
+  }
 });
 
 autoUpdater.on('error', (err) => {
   console.error('Error while checking for updates:', err);
+  if (isManualUpdateCheck) {
+    dialog.showMessageBox({
+      type: 'error',
+      title: 'Update Error',
+      message: 'Error while checking for updates: ' + err.message
+    });
+    isManualUpdateCheck = false;
+  }
 });
 
 autoUpdater.on('download-progress', (progressObj) => {
