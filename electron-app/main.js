@@ -105,9 +105,14 @@ app.on('window-all-closed', () => {
 
 
 // ✅ CHECK FOR UPDATES HANDLER
-ipcMain.handle('check-updates', () => {
+ipcMain.handle('check-updates', async () => {
   isManualUpdateCheck = true;
-  autoUpdater.checkForUpdatesAndNotify();
+  try {
+    await autoUpdater.checkForUpdatesAndNotify();
+  } catch (err) {
+    console.error(err);
+  }
+  return true;
 });
 
 // ✅ SAVE PDF HANDLER

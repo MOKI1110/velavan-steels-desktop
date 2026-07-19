@@ -70,6 +70,62 @@
             padding: 2px;
         }
 
+        /* Toggle Switch */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 22px;
+        }
+        .switch input { 
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: .2s;
+            border-radius: 22px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .2s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .slider:after {
+            content: "NO";
+            position: absolute;
+            color: #ccc;
+            font-size: 10px;
+            font-weight: bold;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 8px;
+            transition: .2s;
+        }
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        input:checked + .slider:after {
+            content: "YES";
+            color: white;
+            left: 8px;
+            right: auto;
+        }
+
         .invoice-border {
             border: 2px solid var(--border-color);
             padding: 20px;
@@ -711,7 +767,7 @@
             #sub-value,
             #discount-value,
             #total-value,
-            #gross-weight {
+            #total-value {
                 padding-right: 13px !important;
             }
 
@@ -813,8 +869,9 @@
         Refresh
     </button>
 
-    <button class="btn-update no-print" onclick="window.electronAPI.checkUpdates()" title="Check for Updates">
-        Check for Updates
+    <button class="btn-update no-print" onclick="handleUpdateClick(this)" title="Check for Updates">
+        <span class="update-text">Check for Updates</span>
+        <span class="update-spinner" style="display:none; font-size:12px;"> ⏳</span>
     </button>
 
     <!-- Update Progress UI -->
@@ -826,6 +883,28 @@
     </div>
 
     <script>
+        async function handleUpdateClick(btn) {
+            const textSpan = btn.querySelector('.update-text');
+            const spinnerSpan = btn.querySelector('.update-spinner');
+            
+            textSpan.innerText = 'Checking...';
+            spinnerSpan.style.display = 'inline';
+            btn.disabled = true;
+            btn.style.opacity = '0.7';
+            btn.style.cursor = 'wait';
+
+            try {
+                await window.electronAPI.checkUpdates();
+                // small delay for dialogs to render
+                await new Promise(r => setTimeout(r, 1000));
+            } finally {
+                textSpan.innerText = 'Check for Updates';
+                spinnerSpan.style.display = 'none';
+                btn.disabled = false;
+                btn.style.opacity = '1';
+                btn.style.cursor = 'pointer';
+            }
+        }
         if (window.electronAPI && window.electronAPI.onUpdateProgress) {
             window.electronAPI.onUpdateProgress((progressObj) => {
                 const container = document.getElementById('update-progress-container');
@@ -927,12 +1006,11 @@
                         </td>
                         <td class="summary-label">
                             LOADING
-                            <div class="no-print" style="font-size: 0.7rem; font-weight: normal; margin-top: 4px;">
-                                <select id="loading-toggle" onchange="toggleLoadUnload()"
-                                    style="width: 50px; font-size: 0.65rem; padding: 1px 3px; border-radius: 3px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
+                            <div class="no-print" style="margin-top: 6px;">
+                                <label class="switch">
+                                    <input type="checkbox" id="loading-toggle" checked onchange="toggleLoadUnload()">
+                                    <span class="slider"></span>
+                                </label>
                             </div>
                         </td>
                         <td id="loading-cell"><span id="loading" class="val-total"
@@ -942,12 +1020,11 @@
                     <tr>
                         <td class="summary-label">
                             UNLOADING
-                            <div class="no-print" style="font-size: 0.7rem; font-weight: normal; margin-top: 4px;">
-                                <select id="unloading-toggle" onchange="toggleLoadUnload()"
-                                    style="width: 50px; font-size: 0.65rem; padding: 1px 3px; border-radius: 3px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
-                                    <option value="yes">Yes</option>
-                                    <option value="no">No</option>
-                                </select>
+                            <div class="no-print" style="margin-top: 6px;">
+                                <label class="switch">
+                                    <input type="checkbox" id="unloading-toggle" checked onchange="toggleLoadUnload()">
+                                    <span class="slider"></span>
+                                </label>
                             </div>
                         </td>
                         <td id="unloading-cell"><span id="unloading" class="val-total"
@@ -957,14 +1034,13 @@
                     <tr id="freight-row">
                         <td colspan="3" class="no-freight-text" id="freight-label">
                             <span id="freight-text">FREIGHT CHARGES APPLICABLE</span>
-                            <div style="font-size: 0.75rem; margin-top: 8px; color: var(--text-main); font-weight: normal;"
+                            <div style="font-size: 0.75rem; margin-top: 8px; color: var(--text-main); font-weight: normal; display: flex; align-items: center; justify-content: center; gap: 8px;"
                                 class="no-print">
-                                <label style="margin-right: 5px;">Include Freight?</label>
-                                <select id="freight-toggle" onchange="toggleFreight()"
-                                    style="width: 55px; font-size: 0.7rem; padding: 2px 4px; border-radius: 4px; background: #fff; color: #000; border: 1px solid #ccc; cursor: pointer;">
-                                    <option value="yes" selected>Yes</option>
-                                    <option value="no">No</option>
-                                </select>
+                                <label>Include Freight?</label>
+                                <label class="switch">
+                                    <input type="checkbox" id="freight-toggle" checked onchange="toggleFreight()">
+                                    <span class="slider"></span>
+                                </label>
                             </div>
                         </td>
                         <td class="summary-label" id="freight-summary-col">FREIGHT</td>
@@ -973,8 +1049,8 @@
                                 style="display:none; text-align:right; font-weight:600; padding-right:8px;">0</span>
 
                             <input type="text" id="freight" value="0" class="no-print"
-                                style="display:block; text-align:right; padding-right:8px; width:100px; margin-left:auto;"
-                                oninput="handleFreightInput(this)" onfocus="this.value = this.value.replace(/,/g,'')"
+                                style="display:block; text-align:right; padding-right:7px; width:100px; margin-left:auto;"
+                                oninput="handleFreightInput(this)" onfocus="this.value = this.value.replace(/,/g,''); if(this.value==='0')this.value=''"
                                 onblur="formatFreightFinal(this)">
                         </td>
                     </tr>
@@ -1199,7 +1275,7 @@
             const freightDisplay = document.getElementById('freight-display');
             const freightToggle = document.getElementById('freight-toggle');
             if (freightDisplay) {
-                if (freightToggle && freightToggle.value === 'no') {
+                if (freightToggle && !freightToggle.checked) {
                     freightDisplay.innerHTML = '<span class="text-red" style="font-weight:bold;">FREE</span>';
                 } else {
                     freightDisplay.innerText = formatINR(freight);
@@ -1208,7 +1284,7 @@
         }
 
         function toggleFreight() {
-            const toggle = document.getElementById('freight-toggle').value;
+            const toggle = document.getElementById('freight-toggle').checked ? 'yes' : 'no';
             const textSpan = document.getElementById('freight-text');
             const input = document.getElementById('freight');
             const display = document.getElementById('freight-display');
@@ -1276,7 +1352,7 @@
                 document.getElementById('discount-percent').value = '0';
             }
             updateBrandPrintDisplay();
-            document.getElementById('freight-toggle').value = 'yes';
+            document.getElementById('freight-toggle').checked = true;
             toggleFreight();
             calculateAll();
         }
@@ -1297,8 +1373,8 @@
         }
 
         function toggleLoadUnload() {
-            const loadToggle = document.getElementById('loading-toggle').value;
-            const unloadToggle = document.getElementById('unloading-toggle').value;
+            const loadToggle = document.getElementById('loading-toggle').checked ? 'yes' : 'no';
+            const unloadToggle = document.getElementById('unloading-toggle').checked ? 'yes' : 'no';
             const loadCell = document.getElementById('loading-cell');
             const unloadCell = document.getElementById('unloading-cell');
 
